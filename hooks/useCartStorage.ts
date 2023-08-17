@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { OrderedDish } from '@/components/CartDishesList';
+import { useState } from 'react';
+import { OrderedDish } from '.prisma/client';
 
 const useCartStorage = (key: string) => {
   const [ordersList, setOrdersList] = useState([]);
@@ -15,8 +15,6 @@ const useCartStorage = (key: string) => {
       setOrdersList(userOrders);
     }
   }
-
-  useEffect(() => {}, []);
 
   return { ordersList, addOrder, removeOrder, getOrdersFromStorage } as {
     ordersList: OrderedDish[];
