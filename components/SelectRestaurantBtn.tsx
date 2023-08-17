@@ -5,12 +5,11 @@ import { CartContext } from '../context/CartContext';
 import { useRouter } from 'next/navigation';
 
 export const SelectRestaurantBtn = () => {
-  const { ordersList, removeAll } = useContext(CartContext);
+  const { removeAll } = useContext(CartContext);
   const router = useRouter();
 
   return (
     <Button
-      disabled={!ordersList.length}
       variant='secondary'
       className='mr-auto border-2 border-amber-600'
       onClick={() => {
