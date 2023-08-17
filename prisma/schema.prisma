@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource prismaClientSetup {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Restaurant {
+  id         String @id @default(uuid())
+  name       String @unique
+  image      String
+  brandColor String
+  Menu       Menu?
+
+  @@index([name])
+}
+
+model Menu {
+  id           String     @id @default(uuid())
+  drinks       Dish[]     @relation("MenuDrink")
+  mainDishes   Dish[]     @relation("MenuMain")
+  desserts     Dish[]     @relation("MenuDessert")
+  Restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String     @unique
+}
+
+model Dish {
+  id                String  @id @default(uuid())
+  name              String
+  price             Float
+  description       String?
+  image             String
+  MenuDrink         Menu?   @relation("MenuDrink", fields: [menuWithDrinkId], references: [id])
+  menuWithDrinkId   String?
+  MenuMain          Menu?   @relation("MenuMain", fields: [menuWithMainId], references: [id])
+  menuWithMainId    String?
+  MenuDessert       Menu?   @relation("MenuDessert", fields: [menuWithDessertId], references: [id])
+  menuWithDessertId String?
+}
+
+model OrdersHistory {
+  id         String         @id @default(uuid())
+  name       String         @unique
+  email      String         @unique
+  phone      String         @unique
+  address    String
+  OrdersList OrdersByUser[]
+
+  @@index([name, email])
+}
+
+model OrdersByUser {
+  id              String        @id @default(uuid())
+  dishesList      OrderedDish[]
+  totalOrderPrice Decimal
+  OrdersHistory   OrdersHistory @relation(fields: [ordersHistoryId], references: [id])
+  ordersHistoryId String
+}
+
+model OrderedDish {
+  id              Int           @id @default(autoincrement())
+  name            String
+  image           String
+  price           Decimal
+  description     String?
+  amount          Int
+  totalOrderPrice Decimal
+  OrdersByUser    OrdersByUser? @relation(fields: [ordersByUserId], references: [id])
+  ordersByUserId  String
+}
